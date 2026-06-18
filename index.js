@@ -7,14 +7,26 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./util/ExpressError.js")
+const listingSchema = require("./schemaValidation.js");
+const cors = require('cors');
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
+
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(cors());
+
+
+const validateListing = (req, res, next) => {
+    const { error } = listingSchema.validate(req.body);
+    if (error) throw new ExpressError(400, error.message);
+    next();
+}
 
 async function main() {
     await mongoose.connect("mongodb://localhost:27017/airbnb-mern-clone");
@@ -23,8 +35,9 @@ async function main() {
 main().then(() => console.log("Database Connected")).catch(err => console.log(err));
 
 
-app.get("/", (req, res) => {
-    res.send("Airbnb clone");
+app.get("/", async (req, res) => {
+    const allListings = await Listing.find({});
+    res.render("listings/index.ejs", { allListings });
 });
 
 app.get("/listings", async (req, res) => {
@@ -36,7 +49,7 @@ app.get("/listings/new", (req, res) => {
     res.render("listings/new.ejs");
 })
 
-app.post("/listings", async (req, res) => {
+app.post("/listings", validateListing, async (req, res) => {
     const newListing = req.body;
     await Listing.create({ ...newListing });
     res.redirect("/listings");
@@ -54,7 +67,7 @@ app.get("/listings/:id/edit", async (req, res) => {
     res.render("listings/edit.ejs", { listing });
 })
 
-app.put("/listings/:id", async (req, res) => {
+app.put("/listings/:id", validateListing, async (req, res) => {
     const { id } = req.params;
     const newListing = req.body;
     await Listing.findByIdAndUpdate(id, { ...newListing }, { runValidators: true });
@@ -79,10 +92,6 @@ app.all(/.*/, (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    console.log(err);
-
-    const status = err.status || 500;
-    const message = err.message || "Something went wrong!";
-    res.render("error.ejs", { err });
-
+    const { status = 500, message = "Something went wrong!" } = err;
+    res.render("error.ejs", { status, message });
 });
