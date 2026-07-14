@@ -3,12 +3,14 @@ const app = express();
 const mongoose = require("mongoose");
 const port = 4000;
 const Listing = require("./models/listing.js");
+const Review = require("./models/review.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./util/ExpressError.js")
-const listingSchema = require("./schemaValidation.js");
+const { listingSchema, reviewSchema } = require("./schemaValidation.js");
 const cors = require('cors');
+
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -28,6 +30,12 @@ const validateListing = (req, res, next) => {
     next();
 }
 
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body.review);
+    if (error) throw new ExpressError(400, error.message);
+    next();
+}
+
 async function main() {
     await mongoose.connect("mongodb://localhost:27017/airbnb-mern-clone");
 }
@@ -41,7 +49,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/listings", async (req, res) => {
-    const allListings = await Listing.find({});
+    const allListings = await Listing.find({}).populate("reviews");
     res.render("listings/index.ejs", { allListings });
 });
 
@@ -57,7 +65,7 @@ app.post("/listings", validateListing, async (req, res) => {
 
 app.get("/listings/:id", async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     res.render("listings/show.ejs", { listing });
 })
 
@@ -78,7 +86,7 @@ app.put("/listings/:id", validateListing, async (req, res) => {
 
 app.delete("/listings/:id", async (req, res) => {
     const { id } = req.params;
-    await Listing.deleteOne({ _id: id });
+    await Listing.findByIdAndDelete({ _id: id });
     res.redirect("/listings");
 })
 
@@ -86,7 +94,25 @@ app.listen(port, () => {
     console.log(`Server started at port ${port}, http://localhost:${port}`);
 });
 
+app.post("/listings/:id/reviews", validateReview, async (req, res) => {
+    let id = req.params.id;
+    let listing = await Listing.findById(id);
+    let newReview = req.body.review;
+    let review = new Review(newReview);
+    listing.reviews.push(review);
+    await review.save();
+    await listing.save();
+    res.redirect(`/listings/${id}`);
+});
 
+app.delete("/listings/:id/:reviewId/reviews", async (req, res) => {
+    let id = req.params.id;
+    let reviewId = req.params.reviewId;
+    await Review.findByIdAndDelete(reviewId);
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    res.redirect(`/listings/${id}`);
+
+})
 app.all(/.*/, (req, res, next) => {
     next(new ExpressError(404, "Page Not Found!"));
 });
