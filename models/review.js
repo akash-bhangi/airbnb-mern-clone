@@ -1,3 +1,5 @@
+// Review schema (for storing review data)
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -14,5 +16,6 @@ const reviewSchema = new Schema({
     }
 });
 
+// Create review model
 module.exports = mongoose.model("Review", reviewSchema);
 

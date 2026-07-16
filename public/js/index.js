@@ -1,3 +1,5 @@
+// Form Validation (for client-side validation)
+
 (() => {
     'use strict'
 

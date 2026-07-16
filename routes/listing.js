@@ -1,3 +1,5 @@
+// Listing routes (for handling listing-related operations)
+
 const express = require("express");
 const router = express.Router();
 const Listing = require("../models/listing.js");

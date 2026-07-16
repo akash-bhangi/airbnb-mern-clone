@@ -12,6 +12,8 @@ main {
     margin-bottom: 5rem;
 }
 
+/* Navigation bar  */
+
 .navbar {
     background-color: white !important;
     padding: 0.75rem 3rem;
@@ -30,6 +32,9 @@ main {
     font-size: 1.8rem;
     font-weight: 700;
 }
+
+
+/* Footer  */
 
 footer {
     padding: 2rem;
@@ -63,6 +68,9 @@ footer {
     text-decoration: underline;
     color: #ff3b3f;
 }
+
+
+/* Listings */
 
 .card-listings {
     border: none !important;

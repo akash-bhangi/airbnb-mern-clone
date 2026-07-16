@@ -1,5 +1,6 @@
 const Joi = require("joi");
 
+// Listungs schema (for validating listing data)
 const listingSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
@@ -10,8 +11,10 @@ const listingSchema = Joi.object({
     }).allow(null, ""),
     location: Joi.string().required(),
     country: Joi.string().required()
+
 });
 
+// Reviews schema (for validating review data)
 const reviewSchema = Joi.object({
     comment: Joi.string().required(),
     rating: Joi.number().min(1).max(5).required()

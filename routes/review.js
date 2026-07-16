@@ -1,3 +1,5 @@
+// Review routes (for handling review-related operations)
+
 const express = require("express");
 const router = express.Router({ mergeParams: true });
 const Review = require("../models/review.js");

@@ -1,3 +1,5 @@
+// Database connection (for connecting to MongoDB)
+
 const mongoose = require("mongoose");
 const Listing = require("../models/listing")
 const initData = require("./data.js");
@@ -8,6 +10,7 @@ async function main() {
 
 main().then(res => console.log("Database Connected")).catch(err => console.log(err));
 
+// Insert sample listings
 async function init() {
     await Listing.deleteMany({});
     await Listing.insertMany(initData.data);
