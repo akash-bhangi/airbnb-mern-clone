@@ -11,11 +11,17 @@ const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const User = require("./models/user.js");
+const LocalStrategy = require("passport-local-mongoose");
 
+
+// Setting view engine and views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
+// Overriding method and body
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -43,6 +49,13 @@ app.use((req, res, next) => {
     next();
 })
 
+// Passport authentication
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 // Database connection (for connecting to MongoDB)
 async function main() {
     await mongoose.connect("mongodb://localhost:27017/airbnb-mern-clone");
@@ -66,5 +79,5 @@ app.use((err, req, res, next) => {
 
 // Start server (for starting the server)
 app.listen(port, () => {
-    console.log(`Server started at port ${port}, http://localhost:${port}`);
+    console.log(`Server started at port ${port}, http://localhost:${port}/listings`);
 });
