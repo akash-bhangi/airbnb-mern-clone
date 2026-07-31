@@ -13,7 +13,8 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const User = require("./models/user.js");
-const LocalStrategy = require("passport-local-mongoose");
+const LocalStrategy = require("passport-local").Strategy;
+const userRoutes = require("./routes/user.js");
 
 
 // Setting view engine and views
@@ -43,18 +44,19 @@ const sessionOption = {
 
 app.use(session(sessionOption));
 app.use(flash());
-app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    next();
-})
-
 // Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
+    next();
+})
 
 // Database connection (for connecting to MongoDB)
 async function main() {
@@ -63,6 +65,7 @@ async function main() {
 main().then(() => console.log("Database Connected")).catch(err => console.log(err));
 
 // Routes (for handling routes)
+app.use("/", userRoutes);
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
 
