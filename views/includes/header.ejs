@@ -6,7 +6,8 @@
                 <i class="fa-brands fa-airbnb text-danger"></i>
                 Airbnb
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -21,16 +22,16 @@
                 <ul class="navbar-nav ms-auto">
                     <% if (!currUser) { %>
                         <li class="nav-item">
-                            <a class="nav-link" href="/signup"><b>Sign Up</b></a>
+                            <a class="nav-link" href="/users/signup"><b>Sign Up</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login">Log In</a>
+                            <a class="nav-link" href="/users/login">Log In</a>
                         </li>
-                    <% } else { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Log Out</a>
-                        </li>
-                    <% } %>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users/logout">Log Out</a>
+                            </li>
+                            <% } %>
                 </ul>
             </div>
         </div>

@@ -7,14 +7,15 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./util/ExpressError.js")
 const cors = require('cors');
-const listings = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+const listingsRoutes = require("./routes/listingRoutes.js");
+const reviewsRoutes = require("./routes/reviewRoutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const User = require("./models/user.js");
 const LocalStrategy = require("passport-local").Strategy;
-const userRoutes = require("./routes/user.js");
+
 
 
 // Setting view engine and views
@@ -65,9 +66,9 @@ async function main() {
 main().then(() => console.log("Database Connected")).catch(err => console.log(err));
 
 // Routes (for handling routes)
-app.use("/", userRoutes);
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
+app.use("/listings", listingsRoutes);
+app.use("/listings/:id/reviews", reviewsRoutes);
+app.use("/users", userRoutes);
 
 // Error handling (for handling errors)
 app.all(/.*/, (req, res, next) => {

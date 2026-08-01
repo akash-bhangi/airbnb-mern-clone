@@ -14,7 +14,7 @@ router.post("/signup", async (req, res, next) => {
         const { username, email, password } = req.body;
         const newUser = new User({ email, username });
         const registeredUser = await User.register(newUser, password);
-        
+
         // Log in the user immediately after signing up
         req.login(registeredUser, (err) => {
             if (err) {

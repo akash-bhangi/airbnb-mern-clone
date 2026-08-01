@@ -5,6 +5,7 @@ const router = express.Router();
 const Listing = require("../models/listing.js");
 const ExpressError = require("../util/ExpressError.js")
 const { listingSchema } = require("../schemaValidation.js");
+const { isLoggedIn } = require("../middleware.js");
 
 
 const validateListing = (req, res, next) => {
@@ -20,7 +21,7 @@ router.get("/", async (req, res) => {
 });
 
 // New Route: Render the form to create a new listing
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("listings/new.ejs");
 })
 
@@ -44,7 +45,7 @@ router.get("/:id", async (req, res) => {
 })
 
 // Edit Route: Render the form to edit an existing listing's details
-router.get("/:id/edit", async (req, res) => {
+router.get("/:id/edit", isLoggedIn, async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
@@ -64,7 +65,7 @@ router.put("/:id", validateListing, async (req, res) => {
 })
 
 // Delete Route: Remove a listing from the database and redirect to the listings page
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isLoggedIn, async (req, res) => {
     const { id } = req.params;
     await Listing.findByIdAndDelete({ _id: id });
     req.flash("success", "Listing Deleted successfully!");
