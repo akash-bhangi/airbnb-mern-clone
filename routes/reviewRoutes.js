@@ -6,6 +6,7 @@ const Review = require("../models/review.js");
 const ExpressError = require("../util/ExpressError.js")
 const { reviewSchema } = require("../schemaValidation.js");
 const Listing = require("../models/listing.js");
+const { isLoggedIn, isReviewAuthor } = require("../middleware.js");
 
 const validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body.review);
@@ -14,12 +15,13 @@ const validateReview = (req, res, next) => {
 }
 
 // Create Review Route: Add a new review to a specific listing and redirect to its show page
-router.post("/", validateReview, async (req, res) => {
+router.post("/", isLoggedIn, validateReview, async (req, res) => {
     let id = req.params.id;
     let listing = await Listing.findById(id);
     let newReview = req.body.review;
     let review = new Review(newReview);
     listing.reviews.push(review);
+    review.author = req.user._id;
     await review.save();
     await listing.save();
     req.flash("success", "Review Added successfully!");
@@ -27,7 +29,7 @@ router.post("/", validateReview, async (req, res) => {
 });
 
 // Delete Review Route: Delete a review from the database and remove its reference from the listing
-router.delete("/:reviewId", async (req, res) => {
+router.delete("/:reviewId", isLoggedIn, isReviewAuthor, async (req, res) => {
     let id = req.params.id;
     let reviewId = req.params.reviewId;
     await Review.findByIdAndDelete(reviewId);

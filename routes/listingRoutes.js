@@ -5,7 +5,7 @@ const router = express.Router();
 const Listing = require("../models/listing.js");
 const ExpressError = require("../util/ExpressError.js")
 const { listingSchema } = require("../schemaValidation.js");
-const { isLoggedIn } = require("../middleware.js");
+const { isLoggedIn, isOwner } = require("../middleware.js");
 
 
 const validateListing = (req, res, next) => {
@@ -28,6 +28,7 @@ router.get("/new", isLoggedIn, (req, res) => {
 // Create Route: Add a new listing to the database and redirect to the listings page
 router.post("/", validateListing, async (req, res) => {
     const newListing = req.body;
+    newListing.owner = req.user._id;
     await Listing.create({ ...newListing });
     req.flash("success", "New Listing Created!");
     res.redirect("/listings");
@@ -36,7 +37,7 @@ router.post("/", validateListing, async (req, res) => {
 // Show Route: Retrieve and display details of a specific listing by its ID
 router.get("/:id", async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id).populate({ path: "reviews", populate: { path: "author" } }).populate("owner");
     if (!listing) {
         req.flash("error", "Listing not found!");
         return res.redirect("/listings");
@@ -45,7 +46,7 @@ router.get("/:id", async (req, res) => {
 })
 
 // Edit Route: Render the form to edit an existing listing's details
-router.get("/:id/edit", isLoggedIn, async (req, res) => {
+router.get("/:id/edit", isLoggedIn, isOwner, async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
@@ -56,16 +57,15 @@ router.get("/:id/edit", isLoggedIn, async (req, res) => {
 })
 
 // Update Route: Save edits made to a listing's details and redirect to its show page
-router.put("/:id", validateListing, async (req, res) => {
+router.put("/:id", validateListing, isOwner, async (req, res) => {
     const { id } = req.params;
-    const newListing = req.body;
-    await Listing.findByIdAndUpdate(id, { ...newListing }, { runValidators: true });
+    await Listing.findByIdAndUpdate(id, { ...req.body }, { runValidators: true });
     req.flash("success", "Listing Updated successfully!");
     res.redirect(`/listings/${id}`);
 })
 
 // Delete Route: Remove a listing from the database and redirect to the listings page
-router.delete("/:id", isLoggedIn, async (req, res) => {
+router.delete("/:id", isLoggedIn, isOwner, async (req, res) => {
     const { id } = req.params;
     await Listing.findByIdAndDelete({ _id: id });
     req.flash("success", "Listing Deleted successfully!");
