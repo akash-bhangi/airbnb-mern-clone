@@ -1,6 +1,24 @@
 const Listing = require("./models/listing.js");
 const Review = require("./models/review.js");
+const { listingSchema } = require("./schemaValidation.js");
+const { reviewSchema } = require("./schemaValidation.js");
+const ExpressError = require("./util/ExpressError.js");
 
+// Validation for listing
+module.exports.validateListing = (req, res, next) => {
+    const { error } = listingSchema.validate(req.body);
+    if (error) throw new ExpressError(400, error.message);
+    next();
+}
+
+// Validation for review
+module.exports.validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body.review);
+    if (error) throw new ExpressError(400, error.message);
+    next();
+}
+
+// Logged in
 module.exports.isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         req.session.redirectUrl = req.originalUrl;
@@ -10,6 +28,7 @@ module.exports.isLoggedIn = (req, res, next) => {
     next();
 }
 
+// Save redirect URL
 module.exports.saveRedirectUrl = (req, res, next) => {
     if (req.session.redirectUrl) {
         res.locals.redirectUrl = req.session.redirectUrl;
@@ -17,6 +36,7 @@ module.exports.saveRedirectUrl = (req, res, next) => {
     next();
 }
 
+// Owner
 module.exports.isOwner = async (req, res, next) => {
     const { id } = req.params;
     let listing = await Listing.findById(id);
@@ -27,6 +47,7 @@ module.exports.isOwner = async (req, res, next) => {
     next();
 }
 
+// Review Author
 module.exports.isReviewAuthor = async (req, res, next) => {
     const { id, reviewId } = req.params;
     let review = await Review.findById(reviewId);
