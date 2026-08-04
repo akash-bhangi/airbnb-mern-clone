@@ -21,7 +21,7 @@ router.route("/login")
         login
     );
 
-// Process Logout
+// Logout Route
 router.get("/logout", logout);
 
 module.exports = router;

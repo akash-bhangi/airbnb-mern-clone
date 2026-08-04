@@ -13,10 +13,15 @@ module.exports.renderNewListingForm = (req, res) => {
 
 // Function to create a new listing
 module.exports.createListing = async (req, res) => {
-    const newListing = req.body;
+    const newListing = new Listing(req.body);
     newListing.owner = req.user._id;
-    await Listing.create({ ...newListing });
-    req.flash("success", "New Listing Created!");
+    if (req.file) {
+        const url = req.file.path;
+        const filename = req.file.filename;
+        newListing.image = { filename, url };
+    }
+    await newListing.save();
+    req.flash("success", "Listing Created!");
     res.redirect("/listings");
 }
 
@@ -45,7 +50,13 @@ module.exports.editListing = async (req, res) => {
 // Function to update a listing
 module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body }, { runValidators: true });
+    const updateData = { ...req.body };
+    if (req.file) {
+        const url = req.file.path;
+        const filename = req.file.filename;
+        updateData.image = { url, filename };
+    }
+    await Listing.findByIdAndUpdate(id, updateData, { runValidators: true });
     req.flash("success", "Listing Updated successfully!");
     res.redirect(`/listings/${id}`);
 }
