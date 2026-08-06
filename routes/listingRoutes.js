@@ -7,6 +7,7 @@ const multer = require("multer");
 const { storage } = require("../cloudinary.js");
 const upload = multer({ storage });
 
+
 // Route for index and create
 router.route("/")
     .get(index)

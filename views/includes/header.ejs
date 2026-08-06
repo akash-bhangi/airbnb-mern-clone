@@ -19,17 +19,19 @@
                         <a class="nav-link" href="/listings/new">New Listing</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <% if (!currUser) { %>
                         <li class="nav-item">
-                            <a class="nav-link" href="/users/signup"><b>Sign Up</b></a>
+                            <a class="nav-link <%= (typeof currPath !== 'undefined' && currPath === '/users/login') ? 'nav-btn-primary' : 'nav-btn-secondary' %>"
+                                href="/users/login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/users/login">Log In</a>
+                            <a class="nav-link <%= (typeof currPath !== 'undefined' && currPath === '/users/login') ? 'nav-btn-secondary' : 'nav-btn-primary' %>"
+                                href="/users/signup">Sign Up</a>
                         </li>
                         <% } else { %>
                             <li class="nav-item">
-                                <a class="nav-link" href="/users/logout">Log Out</a>
+                                <a class="nav-link nav-btn-secondary" href="/users/logout">Logout</a>
                             </li>
                             <% } %>
                 </ul>

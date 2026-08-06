@@ -23,6 +23,52 @@ main {
     color: black !important;
 }
 
+/* Custom premium navigation buttons */
+.nav-btn-secondary {
+    color: #222222 !important;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 30px;
+    transition: all 0.2s ease-in-out;
+    margin-right: 0.5rem;
+}
+
+.nav-btn-secondary:hover {
+    background-color: #f7f7f7;
+    color: #000000 !important;
+}
+
+.nav-btn-secondary:active {
+    background: linear-gradient(135deg, #FF385C 0%, #E61E4D 50%, #FF385C 100%) !important;
+    background-size: 200% auto !important;
+    color: white !important;
+    transform: translateY(0);
+}
+
+.nav-btn-primary {
+    background: linear-gradient(135deg, #FF385C 0%, #E61E4D 50%, #FF385C 100%) !important;
+    background-size: 200% auto !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(255, 56, 92, 0.15);
+    transition: all 0.3s ease-in-out;
+    border: 1px solid transparent;
+}
+
+.nav-btn-primary:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(255, 56, 92, 0.3);
+    background-position: right center !important;
+    color: white !important;
+}
+
+.nav-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(255, 56, 92, 0.2);
+}
+
 .fa-airbnb {
     font-size: 2.5rem;
 }
