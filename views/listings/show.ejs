@@ -96,16 +96,16 @@
                                         <%}%>
                                 </div>
                                 <%}%>
-                                    <p>Where you'll be</p>
-                                    <div id="map">
-
-                                    </div>
+                                    <hr>
+                                    <h5>Where you'll be</h5>
+                                    <div id="map"></div>
         </div>
     </div>
 
     <!-- Pass the data to window/global variables first -->
     <script>
-        const listing = JSON.stringify(listing);
+        const listing = <%- JSON.stringify(listing) %>;
     </script>
+
     <!-- Include the external map.js file -->
     <script src="/js/map.js"></script>

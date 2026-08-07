@@ -1,5 +1,6 @@
 const Listing = require("../models/listing.js");
 const { cloudinary } = require("../cloudinary.js");
+const { getCoordinates } = require("../util/getCoordinates.js");
 
 // Function to get all listings
 module.exports.index = async (req, res) => {
@@ -14,7 +15,9 @@ module.exports.renderNewListingForm = (req, res) => {
 
 // Function to create a new listing
 module.exports.createListing = async (req, res) => {
+    const response = await getCoordinates(req.body.location);
     const newListing = new Listing(req.body);
+    newListing.geometry.coordinates = [response.data[0].lon, response.data[0].lat];
     newListing.owner = req.user._id;
     if (req.file) {
         const url = req.file.path;
@@ -22,6 +25,7 @@ module.exports.createListing = async (req, res) => {
         newListing.image = { filename, url };
     }
     await newListing.save();
+    console.log(newListing);
     req.flash("success", "Listing Created!");
     res.redirect("/listings");
 }
@@ -55,8 +59,10 @@ module.exports.updateListing = async (req, res) => {
     if (req.file) {
         const url = req.file.path;
         const filename = req.file.filename;
-        updateData.image = { url, filename };
+        updateData.image = { filename, url };
     }
+    const response = await getCoordinates(updateData.location);
+    updateData.geometry = { coordinates: [response.data[0].lon, response.data[0].lat] };
     await Listing.findByIdAndUpdate(id, updateData, { runValidators: true });
     req.flash("success", "Listing Updated successfully!");
     res.redirect(`/listings/${id}`);

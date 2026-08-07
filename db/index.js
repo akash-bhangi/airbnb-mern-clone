@@ -16,10 +16,6 @@ async function init() {
     initData.data = initData.data.map((obj) => ({
         ...obj,
         owner: "6a6da5f369636532b91095b4",
-        geometry: {
-            type: "Point",
-            coordinates: [79.23, 23.69]
-        }
     }));
     await Listing.insertMany(initData.data);
     console.log("Data Inserted");

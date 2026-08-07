@@ -9,6 +9,10 @@ const listingSchema = Joi.object({
         url: Joi.string().allow(null, ""),
         filename: Joi.string().allow(null, "")
     }).allow(null, ""),
+    geometry: Joi.object({
+        type: Joi.string().allow(null, ""),
+        coordinates: Joi.array().allow(null, "")
+    }).allow(null, ""),
     location: Joi.string().required(),
     country: Joi.string().required()
 
