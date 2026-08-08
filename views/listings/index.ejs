@@ -1,7 +1,7 @@
 <!-- All Listings Page (for showing all listings) -->
 
 <% layout("layouts/boilerplate") %>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-5">
         <%for(let listing of allListings){%>
             <div class="col mb-3">
                 <a href="/listings/<%= listing._id %>" class="listing-link">

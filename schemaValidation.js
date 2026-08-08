@@ -14,7 +14,8 @@ const listingSchema = Joi.object({
         coordinates: Joi.array().allow(null, "")
     }).allow(null, ""),
     location: Joi.string().required(),
-    country: Joi.string().required()
+    country: Joi.string().required(),
+    category: Joi.string().required()
 
 });
 

@@ -4,8 +4,28 @@ const { getCoordinates } = require("../util/getCoordinates.js");
 
 // Function to get all listings
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({}).populate("reviews");
-    res.render("listings/index.ejs", { allListings });
+    if (!req.query.category && !req.query.search) {
+        let allListings = await Listing.find({}).populate("reviews");
+        return res.render("listings/index.ejs", { allListings });
+    }
+    if (!req.query.search) {
+        const { category } = req.query;
+        // Capitalize category (e.g. 'home' -> 'Home') to match the DB/schema values
+        const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+        let allListings = await Listing.find({ category: formattedCategory }).populate("reviews");
+        if (allListings.length === 0) {
+            req.flash("error", "No listings found for this category!");
+            return res.redirect("/listings");
+        }
+        return res.render("listings/index.ejs", { allListings });
+    }
+    const { search } = req.query;
+    let allListings = await Listing.find({ $text: { $search: search } }).populate("reviews");
+    if (allListings.length === 0) {
+        req.flash("error", "No listings found for this category!");
+        return res.redirect("/listings");
+    }
+    return res.render("listings/index.ejs", { allListings });
 }
 
 // Function to render new listing form

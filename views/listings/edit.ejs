@@ -40,6 +40,16 @@
                     </div>
                 </div>
                 <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-select form-select-sm" aria-label="Small select
+                        example">
+                        <option selected>Select Category</option>
+                        <option value="Home">Home</option>
+                        <option value="Service">Service</option>
+                        <option value="Mountain">Mountain</option>
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" name="location" value="<%= listing.location %>" class="form-control"
                         id="location" required>

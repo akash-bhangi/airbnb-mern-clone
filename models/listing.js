@@ -54,6 +54,11 @@ const listingSchema = new Schema({
             type: [Number],
             default: [76.5217, 16.1588]
         }
+    },
+    category: {
+        type: String,
+        enum: ["Home", "Service", "Mountain"],
+        required: true
     }
 });
 

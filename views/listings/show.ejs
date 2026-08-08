@@ -2,7 +2,7 @@
 <% layout("layouts/boilerplate") %>
     <div class="row justify-content-center mt-1">
         <div class="col-10 col-md-8 col-lg-6">
-            <h2 class="mb-2">
+            <h2 class="mt-1 mb-2">
                 <%= listing.title %>
             </h2>
             <div class="show-card card-listings">
@@ -98,14 +98,11 @@
                                 <%}%>
                                     <hr>
                                     <h5>Where you'll be</h5>
-                                    <div id="map"></div>
+                                    <div id="map" data-coordinates="<%- JSON.stringify(listing.geometry.coordinates) %>"
+                                        data-title="<%= listing.title %>" data-location="<%= listing.location %>"
+                                        data-price="<%= listing.price %>"></div>
         </div>
     </div>
-
-    <!-- Pass the data to window/global variables first -->
-    <script>
-        const listing = <%- JSON.stringify(listing) %>;
-    </script>
 
     <!-- Include the external map.js file -->
     <script src="/js/map.js"></script>
